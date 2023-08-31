@@ -32,9 +32,9 @@ param (
     [ArgumentCompleter({
         [OutputType([System.Management.Automation.CompletionResult])]
         param([string] $CommandName,[string] $ParameterName,[string] $WordToComplete,[System.Management.Automation.Language.CommandAst] $CommandAst,[System.Collections.IDictionary] $FakeBoundParameters)
-        return (Get-Content .\versions.json -Encoding UTF8 | ConvertFrom-Json).versions
+        return (Get-Content $PSScriptRoot\versions.json -Encoding UTF8 | ConvertFrom-Json).versions
     })]
-    $Version = $((Get-Content .\versions.json -Encoding UTF8 | ConvertFrom-Json).versions | Sort-Object -Descending | Select-Object -First 1)
+    $Version = $((Get-Content $PSScriptRoot\versions.json -Encoding UTF8 | ConvertFrom-Json).versions | Sort-Object -Descending | Select-Object -First 1)
 )
 
 # Define constants
