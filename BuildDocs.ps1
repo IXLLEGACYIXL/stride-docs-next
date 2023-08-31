@@ -37,8 +37,6 @@ param (
     $Version = $((Get-Content $PSScriptRoot\versions.json -Encoding UTF8 | ConvertFrom-Json).versions | Sort-Object -Descending | Select-Object -First 1)
 )
 
-# Define constants
-$Version = "4.1" # Make sure you update also versions.json
 $SiteDirectory = "_site/$Version"
 $LocalTestHostUrl = "http://localhost:8080/$Version/en/index.html"
 
