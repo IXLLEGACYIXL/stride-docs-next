@@ -1,27 +1,23 @@
 <#
 .SYNOPSIS
     This script builds documentation (manuals, tutorials, release notes) in selected language(s) from the languages.json file and optionally includes API documentation.
-
 .DESCRIPTION
     The script allows the user to build documentation in English or any other available language specified in the languages.json file. It provides options to build documentation in all available languages, run a local website for the documentation, or cancel the operation. If the user chooses to build the documentation, the script also prompts whether API documentation should be included.
-
 .NOTES
     The documentation files are expected to be in Markdown format (.md). The script uses the DocFX tool to build the documentation and optionally includes API documentation. The script generates the API documentation from C# source files using DocFX metadata and can run a local website using the DocFX serve command. This script can also be run from GitHub Actions.
-
 .LINK
     https://github.com/VaclavElias/stride-website-next
 .LINK
     https://github.com/VaclavElias/stride-docs-next/blob/main/en/languages.json
 .LINK
     https://dotnet.github.io/docfx/index.html
-
 .PARAMETER BuildAll
     Switch parameter. If provided, the script will build documentation in all available languages and include API documentation.
-
+.PARAMETER Version
+    The Version to build the Docs, the default is the latest version
 .EXAMPLE
     .\BuildDocs.ps1 -BuildAll
     In this example, the script will build the documentation in all available languages and include API documentation. Use this in GitHub Actions.
-
 .EXAMPLE
     .\BuildDocs.ps1
     In this example, the script will prompt the user to select an operation and an optional language. If the user chooses to build the documentation, the script will also ask if they want to include API documentation.
@@ -37,13 +33,10 @@ param (
     $Version = $((Get-Content $PSScriptRoot\versions.json -Encoding UTF8 | ConvertFrom-Json).versions | Sort-Object -Descending | Select-Object -First 1)
 )
 
-$SiteDirectory = "_site/$Version"
-$LocalTestHostUrl = "http://localhost:8080/$Version/en/index.html"
-
 $Settings = [PSCustomObject]@{
     Version = $Version
-    SiteDirectory = $SiteDirectory
-    LocalTestHostUrl = $LocalTestHostUrl
+    SiteDirectory = "_site/$Version"
+    LocalTestHostUrl = "http://localhost:8080/$Version/en/index.html"
     LanguageJsonPath = "en\languages.json"
     LogPath = ".\build.log"
     TempDirectory = "_tmp"
@@ -291,10 +284,10 @@ function PostProcessing-DocFxDocUrl {
 <#
 .SYNOPSIS
     DocFX generates GitHub link based on the temp _tmp folder, which we need to fix to correct GitHub links. This function performs the needed adjustments.
-
 .DESCRIPTION
     This function takes a selected language as input and iterates through the relevant HTML and markdown files. It corrects the meta tag "docfx:docurl" and anchor tags to reflect the correct GitHub URL by replacing the temporary folder path.
-
+.PARAMETER SelectedLanguage
+    The Language to find the relevant HTML and markdown Files
 .NOTES
     1. This function assumes that the folder structure and naming conventions meet the specified conditions.
     2. Progress is displayed interactively, and is suppressed in non-interactive sessions such as CI/CD pipelines.
